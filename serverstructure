@@ -1,0 +1,7 @@
+1. Client 1 connects to webpage and inputs nickname
+2. Front end sends IP of Client 1 (IP1) to Server with nickname (IP1, name1)
+3. Server keeps tuple in queue and waits
+4. Client 2 connects to webpage and inputs nickname (IP2, name2)
+5. Server accepts (IP2, name2)
+6. Server sends Client1 (IP2, name2), and sends Client2 (IP1, name1)
+7. Client 1 Front End sends and receives messages from IP2 and displays name2 and vice versa
