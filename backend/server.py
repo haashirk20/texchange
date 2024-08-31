@@ -13,7 +13,7 @@ def index():
 @socketio.on('message')
 def handle_message(data):  
 
-    emit('message', data, broadcast=False)
+    emit('message', data, broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=4000, host='192.168.2.11')
