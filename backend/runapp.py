@@ -9,7 +9,7 @@ import threading
 
 app = flask.Flask(__name__)
 client_ips = []
-hostip = '192.168.2.11'
+hostip = '127.0.0.1'
 port = 4000
 
 @app.route('/')
