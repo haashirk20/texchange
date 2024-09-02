@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!--HTML Homepage for TexChange
+    Authors: Moses Luna, Avi Ghatora, Haashir Khan
+    For: TexChange Inc. -->
+
+<!--TODO: change all ids and classes to be more coherent with the CSS and JS-->
+<html lang="En">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TexChange Homepage</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" title="style" />
+    <script src="dev.js"></script>
+  </head>
+  <body>
+    <!--start of page-->
+
+    <!--navigation bar for now but combine with total page for minimalistic look -ML -->
+    <header id="navbar">
+      <div id="leftbar">
+        <h1 id="headertext" onclick="returnHome()">LOGO</h1>
+      </div>
+      <div id="rightbar">
+      </div>
+    </header>
+
+    <!--main div for the website for intro and nickname setting -ML -->
+    <div id="intro">
+        <!--make intro text be displayed using js-->
+      <b id="introtext">Welcome to the chatroom!</b>
+        <div id="chatroom"></div>
+        
+        <div id="messageDiv">
+            <input type="text" id="sendBox" name="nickname" placeholder="Send Message" onkeydown="sendMessageWithEnter(event)">
+            <button type="button" id="setNick" onclick="sendMessage()">SEND -></button>
+        </div>
+        <button type="button" id="setNick" onclick="fadeIntoQueue()">SKIP</button>
+
+        <div id="connectOverlay">
+            <b id="connecttext">You have been exchanged!</b>
+        </div>
+    </div>
+
+    <!--end of page-->
+  </body>
+</html>
