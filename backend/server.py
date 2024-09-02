@@ -32,6 +32,7 @@ def on_join(data):
                 room = random.randint(1000, 9999)
                 if room not in active_rooms:
                     active_rooms[room] = []
+                    emptyroomkeys.append(room)
                     break
         else:
             room = random.choice(emptyroomkeys)
@@ -41,6 +42,9 @@ def on_join(data):
             join_room(room)
             active_rooms[room].append(username)
             emit('status', {'msg': f'{username} has entered room {room}.'}, room=room)
+            if len(active_rooms[room]) == 2:
+                emit('status', {'msg': 'Both users have joined. You can now start chatting.'}, room=room)
+                emptyroomkeys.remove(room)
         else:
             emit('status', {'msg': 'Room is full.'})
 
