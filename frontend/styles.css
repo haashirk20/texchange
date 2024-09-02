@@ -1,0 +1,174 @@
+/*VERY IMPORTANT NOTE: REFACTOR ALL CSS CODE AND MAKE THE CSS LOOK BETTER
+Also split the CSS by categorizing by elements for each page using comments*/
+
+* {
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: Sans-Serif, Serif, Arial;
+  }
+  
+  #navbar {
+    display: flex;
+    background-color: #2e5266ff;
+    height: 10vh;
+    width: 100%;
+    font-size: 15px;
+    color: white;
+  }
+  
+  #leftbar {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin-left: 2vw;
+  }
+  
+  #rightbar {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 2vw;
+    text-decoration: none;
+  }
+  
+  li {
+    list-style: none;
+    margin-left: 2vw;
+  }
+  
+  a {
+    text-decoration: none;
+    color: white;
+  }
+  
+  #intro {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background-color: #6e8898ff;
+    height: 90vh;
+    width: 100%;
+    font-size: 30px;
+  }
+
+  #introtext {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    /* height: 90vh; */
+    /* width: 100%; */
+    margin: 20px;
+    padding: 20px;
+    font-size: 30px;
+  }
+
+  #nick {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    height: 5vh;
+    width: 20%;
+    margin: 20px;
+    padding: 20px;
+  }
+
+  #setNick {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    height: 5vh;
+    width: 20%;
+    margin: 20px;
+    padding: 20px;
+  }
+
+  #enterNick {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    height: 5vh;
+    width: 20%;
+    margin: 20px;
+    padding: 20px;
+  }
+
+  #sendBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    height: 5vh;
+    width: 40vw;
+    margin: 20px;
+    padding: 20px;
+  }
+
+  #sendMes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    height: 5vh;
+    width: 40vw;
+    margin: 20px;
+    padding: 20px;
+  }
+
+  #connectOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0); /* Semi-transparent black */
+    z-index: 1000; /* Ensure it's on top of other elements */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 1s ease;
+  }
+
+  #connectOverlay.show {
+    visibility: visible;
+    opacity: 0.9;
+  }
+
+  #connecttext {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    height: 100vh;
+    color: white;
+  }
+
+  #chatroom {
+    display: flex;
+    justify-content: top;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 50vh;
+    width: 50vw;
+    background-color: white;
+    overflow-y: auto;
+    white-space: normal;
+  }
+
+  .sentChat {
+    font-size: 12pt;
+  }
+
+  #messageDiv {
+    display: flex;
+    justify-content: top;
+    flex-direction: row;
+    align-items: flex-start;
+  }

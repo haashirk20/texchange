@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!--HTML Homepage for TexChange
+    Authors: Moses Luna, Avi Ghatora, Haashir Khan
+    For: TexChange Inc. -->
+
+<!--TODO: change all ids and classes to be more coherent with the CSS and JS-->
+<html lang="En">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TexChange Homepage</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" title="style" />
+    <script src="dev.js"></script>
+  </head>
+  <body>
+    <!--start of page-->
+
+    <!--navigation bar for now but combine with total page for minimalistic look -ML -->
+    <header id="navbar">
+      <div id="leftbar">
+        <h1 id="headertext" onclick="returnHome()">LOGO</h1>
+      </div>
+      <div id="rightbar">
+      </div>
+    </header>
+
+    <!--main div for the website for intro and nickname setting -ML -->
+    <div id="intro">
+      <b id="introtext">Welcome to TexChange!</b>
+      <input type="text" id="enterNick" name="nickname" placeholder="Enter Nickname" onkeydown="storeNickWithEnter(event)">
+      <button type="button" id="setNick" onclick="storeNick()">CONNECT -></button>
+    </div>
+
+    <div id="connectOverlay">
+        <b id="connecttext">You are connected!</b>
+    </div>
+
+    <!--end of page-->
+  </body>
+</html>
