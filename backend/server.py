@@ -19,13 +19,17 @@ def index():
 def home():
     return render_template('home.html')
 
+@app.route('/chat')
+def chat():
+    return render_template('chatroom.html')
+
 
 @socketio.on('join')
 def on_join(data):
     username = data['username']
 
     if find_room_from_user(username) != -1:
-        emit('status', {'msg': 'You are already in a room.'})
+        emit('message', {'msg': 'You are already in a room.'})
     else:
         if len(emptyroomkeys) == 0:
             while True:
@@ -37,16 +41,16 @@ def on_join(data):
         else:
             room = random.choice(emptyroomkeys)
 
-        print(active_rooms)
         if len(active_rooms[room]) < 2:
             join_room(room)
             active_rooms[room].append(username)
-            emit('status', {'msg': f'{username} has entered room {room}.'}, room=room)
+            emit('message', {'msg': f'{username} has entered the room'}, room=room)
             if len(active_rooms[room]) == 2:
-                emit('status', {'msg': 'Both users have joined. You can now start chatting.'}, room=room)
+                emit('message', {'msg': 'Both users have joined. You can now start chatting.'}, room=room)
                 emptyroomkeys.remove(room)
         else:
-            emit('status', {'msg': 'Room is full.'})
+            emit('message', {'msg': 'Room is full.'})
+    print(active_rooms)
 
 @socketio.on('message')
 def on_message(data):
@@ -58,9 +62,10 @@ def on_message(data):
 
 @socketio.on('leave')
 def on_leave(data):
+
     username = data['username']
     room = find_room_from_user(username)
-    
+
     if room == -1:
         emit('status', {'msg': 'You are not in a room.'})
     else:
@@ -68,15 +73,14 @@ def on_leave(data):
         if room in active_rooms:
             emit('status', {'msg': f'{username} has left the room.'}, room=room)
             active_rooms[room].remove(username)
-            emptyroomkeys.append(room)
-            
+        
         if len(active_rooms[room]) == 0:
             emptyroomkeys.remove(room)
             del active_rooms[room]
 
-@socketio.on('disconnect')
-def on_disconnect(data):
-    on_leave(data)
+        elif len(active_rooms[room]) == 1 or emptyroomkeys == 0:
+            emptyroomkeys.append(room)
+    print(active_rooms)
 
 @socketio.on('switch')
 def on_switch(data):

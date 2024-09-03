@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chatroom App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <script src="static/script.js"></script>
+  </head>
+  <body>
+    <h1>Chatroom</h1>
+    <div>
+      <input id="username" placeholder="Username" />
+      <button onclick="joinRoom()">Join Room</button>
+      <button onclick="leaveRoom()">Leave Room</button>
+      <button onclick="onswitch()">Switch Rooms</button>
+    </div>
+
+    <div id="chat">
+      <ul id="messages"></ul>
+      <input id="message_input" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <div>
+      <button onclick="window.location.href='/home'">Go to Home page</button>
+    </div>
+  </body>
+</html>

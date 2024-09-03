@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
     <script src="static/dev.js"></script>
   </head>
-  <body>
+  <body onload="joinRoom()">
     <!--start of page-->
 
     <!--navigation bar for now but combine with total page for minimalistic look -ML -->
@@ -26,13 +26,19 @@
 
     <!--main div for the website for intro and nickname setting -ML -->
     <div id="intro">
-      <b id="introtext">Welcome to TexChange!</b>
-      <input type="text" id="enterNick" name="nickname" placeholder="Enter Nickname" onkeydown="storeNickWithEnter(event)">
-      <button type="button" id="setNick" onclick="storeNick()">CONNECT -></button>
-    </div>
+        <!--make intro text be displayed using js-->
+      <b id="introtext">Welcome to the chatroom!</b>
+        <div id="chatroom"></div>
+        
+        <div id="messageDiv">
+            <input type="text" id="sendBox" name="nickname" placeholder="Send Message" onkeydown="sendMessageWithEnter(event)">
+            <button type="button" id="setNick" onclick="sendMessage()">SEND -></button>
+        </div>
+        <button type="button" id="setNick" onclick="skipRoom()">SKIP</button>
 
-    <div id="connectOverlay">
-        <b id="connecttext">You are connected!</b>
+        <div id="connectOverlay">
+            <b id="connecttext">You have been exchanged!</b>
+        </div>
     </div>
 
     <!--end of page-->

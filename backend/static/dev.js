@@ -1,6 +1,9 @@
-//import "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js";
-
 let userName = sessionStorage.getItem("nick");
+const socket = io();
+
+window.addEventListener('unload', function (e) {
+  socket.emit('leave', { username: userName });
+});
 
 //After clicking connect button after entering username
 function storeNick() {
@@ -15,19 +18,30 @@ function storeNick() {
   fadeIntoQueue();
 }
 
+//Switches pages
 function fadeIntoQueue() {
   const overlay = document.getElementById("connectOverlay");
-
+  //"window.location.href='/chat'"
   overlay.addEventListener("transitionend", function switchToChat() {
-    location.assign("texchange/backend/templates/chatroom.html");
-    //overlay.removeEventListener('transitionend', switchToChat()); //removeeventlistener causes freezing
+    location.assign("/chat");
   });
+  overlay.classList.toggle("show");
+  //socket.emit('join', { username: userName });
+}
 
+function skipRoom() {
+  const overlay = document.getElementById("connectOverlay");
+  //"window.location.href='/chat'"
+  overlay.addEventListener("transitionend", function switchToChat() {
+    socket.emit('switch', { username: userName });
+    location.assign("/chat");
+  });
   overlay.classList.toggle("show");
 }
 
 function returnHome() {
-  location.assign("index.html");
+  socket.emit('leave', { username: userName });
+  location.assign("/");
 }
 
 //This will be for send message
@@ -36,17 +50,20 @@ function sendMessage() {
   let curMessage = messageBox.value;
 
   messageBox.value = "";
+  
+  socket.emit('message', { msg: curMessage, name: userName });
+}
 
+socket.on('message', function(data) {
   let chatroom = document.getElementById("chatroom");
   let chatInst = document.createElement("p");
   chatInst.className = "sentChat";
-  chatInst.textContent = userName + ": " + curMessage;
+
+  chatInst.textContent = data.msg;
+
   chatroom.appendChild(chatInst);
   chatroom.scrollTop = chatroom.scrollHeight;
-}
-
-//This will be for receive message. Maybe have a parameter for the other user's username?
-function receiveMessage() {}
+});
 
 function sendMessageWithEnter(e) {
   if (e.key === "Enter") {
@@ -58,4 +75,8 @@ function storeNickWithEnter(e) {
   if (e.key === "Enter") {
     storeNick();
   }
+}
+
+function joinRoom() {
+  socket.emit('join', { username: userName });
 }
