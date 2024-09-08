@@ -123,4 +123,4 @@ def create_extra_room():
 # scheduler.start()
 
 if __name__ == '__main__':
-    socketio.run(app, host= hostip, port=port, debug=True)
+    socketio.run(app)
