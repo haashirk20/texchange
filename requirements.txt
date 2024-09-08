@@ -5,3 +5,4 @@ Flask_SocketIO==5.3.6
 Requests==2.32.3
 gunicorn==19.7.1
 gevent==24.2.1
+eventlet==0.36.1
