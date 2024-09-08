@@ -4,7 +4,7 @@ import random
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-hostip = "192.168.2.11"
+hostip = "127.0.0.1"
 port = 4000
 
 #total users
@@ -29,6 +29,7 @@ def chat():
 
 @socketio.on('join')
 def on_join(data):
+    global total_users, emptyroomkeys, active_rooms
     username = data['username']
     
     if find_room_from_user(username) != -1:
@@ -46,6 +47,7 @@ def on_join(data):
         if len(active_rooms[room]) < 2:
             join_room(room)
             total_users += 1
+            print(total_users)
             active_rooms[room].append(username)
             emit('message', {'msg': f'{username} has entered the room'}, room=room)
             if len(active_rooms[room]) == 2:
@@ -66,7 +68,7 @@ def on_message(data):
 @socketio.on('leave')
 def on_leave(data):
 
-    
+    global total_users, emptyroomkeys, active_rooms
     username = data['username']
     room = find_room_from_user(username)
 
