@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, join_room, leave_room, emit
+from apscheduler.schedulers.background import BackgroundScheduler
 import random
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-hostip = "127.0.0.1"
+hostip = "192.168.2.11"
 port = 4000
 
 #total users
@@ -29,25 +30,23 @@ def chat():
 
 @socketio.on('join')
 def on_join(data):
-    global total_users, emptyroomkeys, active_rooms
     username = data['username']
     
     if find_room_from_user(username) != -1:
         emit('message', {'msg': 'You are already in a room.'})
     else:
-        if len(emptyroomkeys) == 0 or (total_users % 2) == 0: #creates room, if there are no empty rooms or     
+        if len(emptyroomkeys) == 0: #creates room, if there are no empty rooms or     
             while True:
                 room = random.randint(1000, 9999)
                 if room not in active_rooms:
                     active_rooms[room] = []
                     emptyroomkeys.append(room)
                     break
-        room = random.choice(emptyroomkeys)  #puts user in random room. 
+        else:
+            room = random.choice(emptyroomkeys)  #puts user in random room. 
 
         if len(active_rooms[room]) < 2:
             join_room(room)
-            total_users += 1
-            print(total_users)
             active_rooms[room].append(username)
             emit('message', {'msg': f'{username} has entered the room'}, room=room)
             if len(active_rooms[room]) == 2:
@@ -68,7 +67,6 @@ def on_message(data):
 @socketio.on('leave')
 def on_leave(data):
 
-    global total_users, emptyroomkeys, active_rooms
     username = data['username']
     room = find_room_from_user(username)
 
@@ -76,7 +74,6 @@ def on_leave(data):
         emit('status', {'msg': 'You are not in a room.'})
     else:
         leave_room(room)
-        total_users -= 1
         if room in active_rooms:
             emit('status', {'msg': f'{username} has left the room.'}, room=room)
             active_rooms[room].remove(username)
@@ -103,6 +100,27 @@ def find_room_from_user(username):
             return room
     return -1
 
+def count_users():
+    total_users = 0
+    for room in active_rooms:
+        total_users += len(active_rooms[room])
+    return total_users
+
+def create_extra_room():
+    users = count_users()
+    if users % 2 == 0 and users != 0:
+        while True:
+            room = random.randint(1000, 9999)
+            if room not in active_rooms:
+                active_rooms[room] = []
+                emptyroomkeys.append(room)
+                break
+    print(active_rooms)
+
+
+# scheduler = BackgroundScheduler()
+# job = scheduler.add_job(create_extra_room, 'interval', seconds=5)
+# scheduler.start()
 
 if __name__ == '__main__':
     socketio.run(app, host= hostip, port=port, debug=True)
