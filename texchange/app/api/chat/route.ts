@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server';
 import { getRoom, addMessageToRoom, broadcastToRoom, addRoomController, removeRoomController } from '../../services/queue';
 import type { Message } from '../../types';
 
+// post request api for sending messages
 export async function POST(request: Request) {
+  // grab params from request body
   const { text, senderId, roomId }: Partial<Message> = await request.json();
   
   if (!text || !senderId || !roomId) {
@@ -12,6 +14,7 @@ export async function POST(request: Request) {
     );
   }
 
+  // create message to be sent
   const newMessage: Message = {
     id: Date.now().toString(),
     text,
@@ -26,6 +29,7 @@ export async function POST(request: Request) {
   return NextResponse.json(newMessage, { status: 201 });
 }
 
+// get request api for fetching messages
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const roomId = searchParams.get('roomId');

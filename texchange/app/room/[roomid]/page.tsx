@@ -1,3 +1,7 @@
+/*
+  Custom room page, uses roomid as slug.
+  precondition that there are at most two users in room
+*/
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -5,8 +9,12 @@ import { useParams } from 'next/navigation';
 import type { Message } from '@/app/types';
 
 export default function ChatRoomPage() {
+  // get roomid from URL
   const params = useParams();
   const roomId = params.roomid as string;
+
+  // state hooks, allows the component (ChatRoomPage) to remember information
+  // in this case: messages, user input and the users id
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [userId] = useState(() => {
@@ -17,13 +25,16 @@ export default function ChatRoomPage() {
     return Date.now().toString();
   });
 
+  // useEffect hook, communicates with server backend to send and fetch messages to and from user2
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('chatUserId', userId);
     }
   
+    // creates eventsource to server, with roomid as param
     const eventSource = new EventSource(`/api/chat?roomId=${roomId}`);
     
+    // onmessage event, listens for new messages and updates the state
     eventSource.onmessage = (event) => {
       const newMessages = JSON.parse(event.data);
       setMessages(prev => [...prev, ...newMessages]);
@@ -39,10 +50,13 @@ export default function ChatRoomPage() {
     };
   }, [roomId, userId]);
 
+  // function to handle message submission, sends message to server api
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // if no input, then return
     if (!inputText.trim()) return;
 
+    // send post request to server api
     try {
       await fetch('/api/chat', {
         method: 'POST',
@@ -59,6 +73,7 @@ export default function ChatRoomPage() {
     }
   };
 
+  // frontend jsx code
   return (
     <div className="max-w-md mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Chat Room</h1>

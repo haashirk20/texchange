@@ -1,2 +1,5 @@
-make sure to install dependencies using : npm install in root directory
-nodejs is required
+PREREQS: Node.JS
+
+To Install: cd texchange, npm install
+
+To Run: npm run dev
