@@ -46,6 +46,29 @@ export const addToQueue = (userId: string, controller: ReadableStreamDefaultCont
 };
 
 
+
+export const swapUsers = (room: ChatRoom) => {
+  // Create a copy of the users in the room
+  console.log("USERS SWAPPED");
+  const usersInRoom = [...room.users];
+
+  // Clear the users array in the room
+  room.users = [];
+  console.log(room.users);
+
+  // Add users back to the queue
+  for (let i = 0; i < usersInRoom.length; i++) {
+    const user = usersInRoom[i];
+    const userController = roomControllers.find(rc => rc.roomId === room.id)?.controller;
+    if (userController) {
+      addToQueue(user.id, userController);
+    }
+  }
+
+  // Attempt to match users in the queue
+  tryMatchUsers();
+};
+
 // checks to see if there are at least two users in the queue, if so, creates a room for them
 const tryMatchUsers = () => {
   while (queue.length >= 2) {
