@@ -20,7 +20,7 @@ code {
 .background {
   width: 100vw;
   height: 100vh;
-  background-image: linear-gradient(to bottom right, purple, blue);
+  background-image: linear-gradient(to bottom right, #17153b, rgb(72, 10, 187));
 }
 
 header {
