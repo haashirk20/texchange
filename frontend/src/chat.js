@@ -1,10 +1,8 @@
 import "./App.js";
+import "./home.js";
 import React from "react";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
-import styles from "./styles.css";
-import { HashRouter, Routes, Route } from "react-router-dom";
-import { home } from "./home";
 import { Link } from "react-router-dom";
 
 const socket = io("http://localhost:5000");
@@ -20,6 +18,7 @@ export function Chatroom() {
     });
 
     socket.on("match_room", (matchedRoom) => {
+      setMessages((prev) => []);
       setRoom(matchedRoom);
     });
 
@@ -35,6 +34,7 @@ export function Chatroom() {
   const sendMessage = () => {
     if (message.trim() && room) {
       socket.emit("send_message", { room, message });
+      setMessages((prev) => [...prev, "You: " + message]);
       setMessage("");
     }
   };
@@ -43,15 +43,39 @@ export function Chatroom() {
     <div className="background">
       <header>
         <div className="leftbar">
-          <h1 className="navbarText">TexChange</h1>
+          <Link to="/home" className="link">
+            <div>
+              <h1 className="navbarText">TexChange</h1>
+            </div>
+          </Link>
         </div>
         <div className="rightbar"></div>
       </header>
       <div className="intro">
-        <p className="introText">Welcome to TexChange!</p>
-        <Link to="/chat">
-          <button className="start">START CHATTING</button>
-        </Link>
+        <h1 className="navbarText">Welcome to the chatroom!</h1>
+        <div id="chatbox">
+          {messages.map((msg, index) => (
+            <div key={index} className="sentChat">
+              {msg}
+            </div>
+          ))}
+        </div>
+        <div className="messages">
+          <input
+            type="text"
+            id="sendbox"
+            placeholder="Send Message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          />
+          <button type="button" className="send" onClick={sendMessage}>
+            SEND
+          </button>
+          <button type="button" className="send" onClick={swap}>
+            SKIP
+          </button>
+        </div>
       </div>
       <footer>
         <p className="footerText">Created By: Haashir K, Moses L, Avi G</p>

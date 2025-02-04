@@ -30,7 +30,16 @@ io.on("connection", (socket) => {
 
   socket.on("send_message", ({ room, message }) => {
     try {
-      io.to(room).emit("receive_message", message);
+      const roomUsers = findUsers(room); // Function to get users in the room
+      if (roomUsers.length !== 2) {
+        console.error("Message send error: Room does not have two users.");
+        return;
+      }
+
+      const recipient = roomUsers.find((user) => user.id !== socket.id); // Find the other user
+      if (recipient) {
+        recipient.emit("receive_message", "Anonymous: " + message); // Send message only to the other user
+      }
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -38,23 +47,23 @@ io.on("connection", (socket) => {
 
   socket.on("swap", () => {
     try {
-        // get both users in the room
-        const room = rooms[socket.id];
-        const roomusers = findUsers(room);
-        // remove users from room, add them to queue, then try matchUsers
-        roomusers.forEach((user) => {
-            user.leave(room);
-            delete rooms[user.id];
-            queue.push(user);
-        });
-        matchUsers();
+      // get both users in the room
+      const room = rooms[socket.id];
+      const roomusers = findUsers(room);
+      // remove users from room, add them to queue, then try matchUsers
+      roomusers.forEach((user) => {
+        user.leave(room);
+        delete rooms[user.id];
+        queue.push(user);
+      });
+      matchUsers();
     } catch (error) {
       console.error("Error during swap:", error);
     }
   });
 
   socket.on("disconnect", () => {
-    try {        
+    try {
       console.log("User disconnected:", socket.id);
       removeFromQueue(socket);
       removeFromRooms(socket);
@@ -66,13 +75,13 @@ io.on("connection", (socket) => {
 });
 
 function findUsers(room) {
-    const users = [];
-    io.sockets.sockets.forEach((socket) => {
-        if (rooms[socket.id] === room) {
-        users.push(socket);
-        }
-    });
-    return users;
+  const users = [];
+  io.sockets.sockets.forEach((socket) => {
+    if (rooms[socket.id] === room) {
+      users.push(socket);
+    }
+  });
+  return users;
 }
 
 function matchUsers() {
@@ -80,7 +89,7 @@ function matchUsers() {
     const user1 = queue.shift();
     const user2 = queue.shift();
     const room = `room-${uuidv4()}`; // Use UUID for unique room names
-    
+
     rooms[user1.id] = room;
     rooms[user2.id] = room;
 
@@ -91,7 +100,10 @@ function matchUsers() {
     user1.emit("match_room", room);
     user2.emit("match_room", room);
 
-    io.to(room).emit("receive_message", `You have been paired! Start chatting.`);
+    io.to(room).emit(
+      "receive_message",
+      `You have been paired! Start chatting.`
+    );
     console.log(`Paired users in ${room}`);
   }
 }
@@ -104,9 +116,14 @@ function removeFromQueue(socket) {
 function removeFromRooms(socket) {
   const room = rooms[socket.id];
   if (room) {
-    io.to(room).emit("receive_message", "Your chat partner left. Searching for a new match...");
-    const otherUser = Object.keys(rooms).find((id) => rooms[id] === room && id !== socket.id);
-    
+    io.to(room).emit(
+      "receive_message",
+      "Your chat partner left. Searching for a new match..."
+    );
+    const otherUser = Object.keys(rooms).find(
+      (id) => rooms[id] === room && id !== socket.id
+    );
+
     if (otherUser) {
       queue.push(io.sockets.sockets.get(otherUser)); // Put the remaining user back in queue
       delete rooms[otherUser]; // Remove the other user from the rooms object

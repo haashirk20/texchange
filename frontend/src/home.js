@@ -1,8 +1,4 @@
 import React from "react";
-import { useEffect, useState } from "react";
-import io from "socket.io-client";
-import styles from "./styles.css";
-import { HashRouter, Routes, Route } from "react-router-dom";
 import "./App.js";
 import { Link } from "react-router-dom";
 import "./chat.js";
@@ -12,7 +8,11 @@ export function home() {
     <div className="background">
       <header>
         <div className="leftbar">
-          <h1 className="navbarText">TexChange</h1>
+          <Link to="/home" className="link">
+            <div>
+              <h1 className="navbarText">TexChange</h1>
+            </div>
+          </Link>
         </div>
         <div className="rightbar"></div>
       </header>

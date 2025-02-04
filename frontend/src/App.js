@@ -1,17 +1,14 @@
 import React from "react";
-import io from "socket.io-client";
-import styles from "./styles.css";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import { home } from "./home";
-import { chat } from "./chat";
+import { chat, Chatroom } from "./chat";
 
-const socket = io("http://localhost:5000");
-
-export default function Chatroom() {
+export default function starting() {
   return (
     <HashRouter>
       <Routes>
         <Route path="/home" Component={home} />
+        <Route path="/chat" Component={Chatroom} />
       </Routes>
     </HashRouter>
   );
