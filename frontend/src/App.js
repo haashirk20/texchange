@@ -1,13 +1,13 @@
 import React from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
-import { home } from "./home";
+import { Home } from "./home";
 import { chat, Chatroom } from "./chat";
 
-export default function starting() {
+export default function App() {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" Component={home} />
+        <Route path="/" Component={Home} />
         <Route path="/chat" Component={Chatroom} />
       </Routes>
     </HashRouter>

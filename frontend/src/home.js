@@ -1,9 +1,9 @@
 import React from "react";
-import "./App.js";
+//import "./App.js";
 import { Link } from "react-router-dom";
 import "./chat.js";
 
-export function home() {
+export function Home() {
   return (
     <div className="background">
       <title>TexChange</title>

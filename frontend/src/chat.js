@@ -1,4 +1,4 @@
-import "./App.js";
+//import "./App.js";
 import "./home.js";
 import React from "react";
 import { useEffect, useState } from "react";
@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import "./App.css";
 
 const socket = io("http://localhost:5001");
-
 export function Chatroom() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
