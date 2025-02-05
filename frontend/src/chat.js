@@ -46,11 +46,15 @@ export function Chatroom() {
     }
   };
 
+  const disconnectUser = () => {
+    socket.emit("disconnectUser");
+  };
+
   return (
     <div className="background">
       <header>
         <div className="leftbar">
-          <Link to="/home" className="link">
+          <Link to="/" className="link" onClick={disconnectUser}>
             <div>
               <h1 className="navbarText">TexChange</h1>
             </div>
