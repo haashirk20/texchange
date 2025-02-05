@@ -18,7 +18,7 @@ export function Chatroom() {
   useEffect(() => {
     if (location.pathname !== "/chat") return; // Only connect if user is on /chat
 
-    const newSocket = io("http://localhost:5001"); // Initialize socket
+    const newSocket = io("http://ec2-3-15-26-114.us-east-2.compute.amazonaws.com:5001/"); // Initialize socket
     setSocket(newSocket);
 
     newSocket.on("receive_message", (msg) => {
