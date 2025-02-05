@@ -12,7 +12,6 @@ export default function App() {
       </Routes>
     </HashRouter>
   );
-
   /* return (
     <div className="p-4 max-w-md mx-auto">
       <h1 className="text-xl font-bold mb-4">Chatroom</h1>

@@ -3,11 +3,12 @@ import "./home.js";
 import React from "react";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
-import { Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import "./App.css";
 
-const socket = io("http://localhost:5001");
 export function Chatroom() {
+  const location = useLocation();
+  const [socket, setSocket] = useState(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [room, setRoom] = useState("");
@@ -15,11 +16,16 @@ export function Chatroom() {
   const [initialLoading, setInitialLoading] = useState(true); // Track first-time loading
 
   useEffect(() => {
-    socket.on("receive_message", (msg) => {
+    if (location.pathname !== "/chat") return; // Only connect if user is on /chat
+
+    const newSocket = io("http://localhost:5001"); // Initialize socket
+    setSocket(newSocket);
+
+    newSocket.on("receive_message", (msg) => {
       setMessages((prev) => [...prev, msg]);
     });
 
-    socket.on("match_room", (matchedRoom) => {
+    newSocket.on("match_room", (matchedRoom) => {
       setMessages([]);
       setRoom(matchedRoom);
       setLoading(false);
@@ -27,10 +33,9 @@ export function Chatroom() {
     });
 
     return () => {
-      socket.off("receive_message");
-      socket.off("match_room");
+      newSocket.disconnect();
     };
-  }, []);
+  }, [location.pathname]);
 
   const swap = () => {
     setLoading(true);
@@ -48,6 +53,8 @@ export function Chatroom() {
   const disconnectUser = () => {
     socket.emit("disconnectUser");
   };
+
+  if (location.pathname !== "/chat") return null;
 
   return (
     <div className="background">
