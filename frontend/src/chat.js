@@ -4,13 +4,16 @@ import React from "react";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import { Link } from "react-router-dom";
+import "./App.css";
 
-const socket = io("http://localhost:5000");
+const socket = io("http://localhost:5001");
 
 export function Chatroom() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [room, setRoom] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true); // Track first-time loading
 
   useEffect(() => {
     socket.on("receive_message", (msg) => {
@@ -18,8 +21,10 @@ export function Chatroom() {
     });
 
     socket.on("match_room", (matchedRoom) => {
-      setMessages((prev) => []);
+      setMessages([]);
       setRoom(matchedRoom);
+      setLoading(false);
+      setInitialLoading(false); // Stop first-time loading when room is assigned
     });
 
     return () => {
@@ -29,8 +34,10 @@ export function Chatroom() {
   }, []);
 
   const swap = () => {
+    setLoading(true);
     socket.emit("swap");
   };
+
   const sendMessage = () => {
     if (message.trim() && room) {
       socket.emit("send_message", { room, message });
@@ -52,62 +59,82 @@ export function Chatroom() {
         <div className="rightbar"></div>
       </header>
       <div className="intro">
-        <h1 className="navbarText">Welcome to the chatroom!</h1>
-        <div id="chatbox">
-          {messages.map((msg, index) => (
-            <div key={index} className="sentChat">
-              {msg}
-            </div>
-          ))}
-        </div>
-        <div className="messages">
-          <input
-            type="text"
-            id="sendbox"
-            placeholder="Send Message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          />
-          <button type="button" className="send" onClick={sendMessage}>
-            SEND
-          </button>
-          <button type="button" className="send" onClick={swap}>
-            SKIP
-          </button>
-        </div>
+        {/* Show loading animation when chatroom is first opened */}
+        {initialLoading ? (
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p className="loadingmsg">Looking for people to chat with! ...</p>
+          </div>
+        ) : (
+          <>
+            {!loading && <h1 className="navbarText">Welcome to the chatroom!</h1>}
+
+            {loading ? (
+              <div className="loading-container">
+                <div className="loading-spinner"></div>
+                <p className="loadingmsg">Looking for people to chat with! ...</p>
+              </div>
+            ) : (
+              <>
+                <div id="chatbox">
+                  {messages.map((msg, index) => (
+                    <div key={index} className="sentChat">
+                      {msg}
+                    </div>
+                  ))}
+                </div>
+                <div className="messages">
+                  <input
+                    type="text"
+                    id="sendbox"
+                    placeholder="Send Message"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                    disabled={loading}
+                  />
+                  <button type="button" className="send" onClick={sendMessage} disabled={loading}>
+                    SEND
+                  </button>
+                  <button type="button" className="send" onClick={swap} disabled={loading}>
+                    SKIP
+                  </button>
+                </div>
+              </>
+            )}
+          </>
+        )}
       </div>
       <footer>
-        <p className="footerText">Created By: Haashir K, Moses L, Avi G</p>
+        <p className="footerText">Created By: Haashir K, Moses L, Aviraj G</p>
       </footer>
+
+      {/* CSS for Loading Spinner */}
+      <style>
+        {`
+          .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+          }
+
+          .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+          }
+
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
     </div>
   );
 }
-
-/* return (
-    <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-xl font-bold mb-4">Chatroom</h1>
-      <div className="border p-4 h-64 overflow-auto mb-4">
-        {messages.map((msg, index) => (
-          <div key={index} className="p-2 border-b">
-            {msg}
-          </div>
-        ))}
-      </div>
-      <div className="flex gap-2">
-        <input
-          type="text"
-          className="border p-2 flex-1"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        />
-        <button className="bg-blue-500 text-white p-2" onClick={sendMessage}>
-          Send
-        </button>
-        <button className="bg-blue-500 text-white p-2" onClick={swap}>
-          Swap
-        </button>
-      </div>
-    </div>
-  ); */
