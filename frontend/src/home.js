@@ -8,7 +8,7 @@ export function home() {
     <div className="background">
       <header>
         <div className="leftbar">
-          <Link to="/home" className="link">
+          <Link to="/" className="link">
             <div>
               <h1 className="navbarText">TexChange</h1>
             </div>

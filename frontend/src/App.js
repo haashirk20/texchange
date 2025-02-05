@@ -7,7 +7,7 @@ export default function starting() {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/home" Component={home} />
+        <Route path="/" Component={home} />
         <Route path="/chat" Component={Chatroom} />
       </Routes>
     </HashRouter>

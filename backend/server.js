@@ -72,6 +72,17 @@ io.on("connection", (socket) => {
       console.error("Error during disconnect:", error);
     }
   });
+
+  socket.on("disconnectUser", () => {
+    try {
+      console.log("User disconnected:", socket.id);
+      removeFromQueue(socket);
+      removeFromRooms(socket);
+      matchUsers(); // Try to match new users
+    } catch (error) {
+      console.error("Error during disconnect:", error);
+    }
+  });
 });
 
 function findUsers(room) {
