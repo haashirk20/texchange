@@ -15,7 +15,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:5000", // Frontend URL from env
+    origin: process.env.FRONTEND_URL || "http://localhost:3000", // Frontend URL from env
     methods: ["GET", "POST"],
   },
 });
