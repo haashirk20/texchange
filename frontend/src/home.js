@@ -6,6 +6,7 @@ import "./chat.js";
 export function home() {
   return (
     <div className="background">
+      <title>TexChange</title>
       <header>
         <div className="leftbar">
           <Link to="/" className="link">

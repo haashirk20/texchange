@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import { Link } from "react-router-dom";
 
-const socket = io("http://localhost:5000");
+const socket = io("http://localhost:5001");
 
 export function Chatroom() {
   const [message, setMessage] = useState("");
@@ -46,6 +46,7 @@ export function Chatroom() {
   return (
     <div className="background">
       <header>
+      <title>TexChange</title>
         <div className="leftbar">
           <Link to="/" className="link" onClick={disconnectUser}>
             <div>
