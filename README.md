@@ -1,66 +1,67 @@
-# TexChange
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/hero-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/hero-light.svg">
+    <img src="assets/readme/hero-dark.svg" width="880" alt="TexChange: anonymous one-to-one text chat roulette with first-in, first-out matchmaking, built with React, Express and Socket.IO by three teammates.">
+  </picture>
+</p>
 
-An anonymous text chat roulette. Open the site, get paired with a random stranger, and swap to someone new whenever you like.
+<p align="center">
+  <strong>Open the page, get paired with a stranger, and swap to someone new whenever you like.</strong><br>
+  <strong>Private 1:1 rooms &middot; FIFO matchmaking &middot; no reloads</strong><br>
+  <sub>React and Socket.IO on the client, Express and Socket.IO on the server, Docker Compose to run both.</sub>
+</p>
 
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
-![Express](https://img.shields.io/badge/Express-4-000000?logo=express&logoColor=white)
-![Socket.IO](https://img.shields.io/badge/Socket.IO-4-010101?logo=socketdotio&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
-
-## Demo
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-17153B?style=flat-square&logo=react&logoColor=white" alt="React 19">
+  <img src="https://img.shields.io/badge/Express-4-17153B?style=flat-square&logo=express&logoColor=white" alt="Express 4">
+  <img src="https://img.shields.io/badge/Socket.IO-4-17153B?style=flat-square&logo=socketdotio&logoColor=white" alt="Socket.IO 4">
+  <img src="https://img.shields.io/badge/Docker-17153B?style=flat-square&logo=docker&logoColor=white" alt="Docker">
+</p>
 
 <!-- TODO: demo link or video -->
 
-## Overview
+---
 
-TexChange works like Omegle but text only. Each visitor who opens the chat page joins a waiting queue. As soon as two people are waiting, the server puts them in a private room and relays messages between them with no names attached. Either person can ask for a new partner at any time, and if one leaves, the other goes back into the queue automatically.
+TexChange works like Omegle, but text only. Each visitor who opens the chat page joins a waiting queue. As soon as two people are waiting, the server puts them in a private room and relays messages between them with no names attached.
 
-## Key features
+## Matchmaking
 
-- Automatic matchmaking: users are paired as soon as two are waiting.
-- Anonymous one-to-one messaging. The sender sees "You:" and the recipient sees "Anonymous:".
-- A Swap button that sends both people back to the queue to find new partners.
-- Partner-left handling: the remaining user is told and re-queued without reloading.
-- A loading screen while the server looks for a match.
-- Docker Compose setup that runs the frontend and backend together.
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/matchmaking-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/matchmaking-light.svg">
+    <img src="assets/readme/matchmaking-dark.svg" width="880" alt="Matchmaking: connect, join a Set-based waiting queue, matchUsers pairs the first two in insertion order, the pair gets a private UUID room, and swap or leave sends people back to the queue.">
+  </picture>
+</p>
 
-## Tech stack
+The React app has two routes, `/` (the landing page) and `/chat`. Opening `/chat` connects a Socket.IO client to the Express server on port 5001. The server keeps all matchmaking state in memory: a `Set` of waiting sockets and a map from socket ID to room.
 
-| Area | Tools |
-|---|---|
-| Frontend | React 19, React Router 7 (`HashRouter`), Create React App |
-| Realtime | Socket.IO 4 (client and server) |
-| Backend | Node.js, Express 4, `uuid` |
-| Infrastructure | Docker, Docker Compose |
+Because the queue is a `Set`, a user can't be queued twice, and removing someone on disconnect is a single `delete` with no array search. `matchUsers()` takes the first two entries in insertion order, so the people who have waited longest are matched first.
 
-## Architecture
+## Message flow
 
-The React app has two routes: `/` (landing page) and `/chat`. Opening `/chat` connects a Socket.IO client to the Express server on port 5001. The server holds all matchmaking state in memory: a `Set` of waiting sockets and a map from socket ID to room.
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/message-flow-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/message-flow-light.svg">
+    <img src="assets/readme/message-flow-dark.svg" width="880" alt="Sequence: User A and User B connect, the server runs matchUsers and sends match_room with a room UUID to both, A sends send_message, the server emits receive_message &quot;Anonymous: ...&quot; to B only, B sends swap, and both leave the room and rejoin the queue.">
+  </picture>
+</p>
 
-```mermaid
-sequenceDiagram
-    participant A as User A (React)
-    participant S as Server (Express + Socket.IO)
-    participant B as User B (React)
-    A->>S: connect
-    S->>S: add A to queue
-    B->>S: connect
-    S->>S: add B to queue, matchUsers()
-    S-->>A: match_room (room-uuid)
-    S-->>B: match_room (room-uuid)
-    A->>S: send_message {room, message}
-    S-->>B: receive_message "Anonymous: ..."
-    B->>S: swap
-    S->>S: both leave room, rejoin queue, matchUsers()
-```
+Each room gets a UUID name. Messages go only to the other socket in the room, not back to the sender, so the client adds its own "You:" line locally. On disconnect, the server tells the remaining partner, removes both room entries and puts the partner back in the queue in the same handler, so nobody is left in a dead room.
 
-## Technical highlights
+The app first ran on Flask with gunicorn and eventlet, and was later rewritten on Express and Socket.IO.
 
-- The waiting queue is a `Set` of sockets, so a user can't be queued twice, and removing someone on disconnect is a single `delete` with no array search. `matchUsers()` takes the first two entries in insertion order, so the people who have waited longest are matched first.
-- Each room gets a UUID name. Messages go only to the other socket in the room, not back to the sender, so the client adds its own "You:" line locally.
-- On disconnect the server tells the remaining partner, removes both room entries and puts the partner back in the queue in the same handler, so nobody is left in a dead room.
-- The app first ran on Flask with gunicorn and eventlet, and was later rewritten on Express and Socket.IO.
+## Features
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/features-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/features-light.svg">
+    <img src="assets/readme/features-dark.svg" width="880" alt="Features: automatic matchmaking with a loading screen, anonymous messages, a Swap button, and partner-left handling.">
+  </picture>
+</p>
 
 ## Getting started
 
