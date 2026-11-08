@@ -90,4 +90,4 @@ The client connects to `http://localhost:5001`, which is hard-coded in `frontend
 
 ## Team
 
-Built by Haashir Khan, Moses L. <!-- verify: full name --> and Aviraj Ghatora.
+Built by Haashir Khan, Moses Luna and Aviraj Ghatora.
